@@ -9,8 +9,14 @@ def calculate_length_and_bearing(start_point, end_point):
     
     :param start_point: shapely.geometry.Point 객체로 시작점 좌표
     :param end_point: shapely.geometry.Point 객체로 끝점 좌표
-    :return: (length, bearing) 길이와 방위각 (도 단위)
+    :return: (length, bearing) 길이와 방위각 (도 단위)    
     """
+    #  tuple이면 Point객체로 변경
+    if isinstance(start_point, tuple):
+        start_point = Point(*start_point)
+    if isinstance(end_point, tuple):
+        end_point = Point(*end_point)
+    
     # 좌표 추출
     x1, y1 = start_point.x, start_point.y
     x2, y2 = end_point.x, end_point.y
@@ -35,6 +41,11 @@ def calculate_dxdy(start_point, end_point):
     :param end_point: shapely.geometry.Point 객체로 끝점 좌표
     :return: (length, bearing) 길이와 방위각 (도 단위)
     """
+    if isinstance(start_point, tuple):
+        start_point = Point(*start_point)
+    if isinstance(end_point, tuple):
+        end_point = Point(*end_point)
+
     dx = end_point.x - start_point.x
     dy = end_point.y - start_point.y    
     return dx, dy
