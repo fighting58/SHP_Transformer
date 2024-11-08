@@ -1,0 +1,16 @@
+<RCC>
+  <qresource prefix="images">
+    <file>bg.png</file>
+    <file>shapefile_white.svg</file>
+    <file>shapefile_dark.svg</file>
+    <file>x.svg</file>
+    <file>smile.svg</file>
+    <file>frown.svg</file>
+  </qresource>
+  <qresource prefix="styles">
+    <file>styles.qss</file>
+  </qresource>
+  <qresource prefix="help">
+    <file>SHP_Coordinate_Converter_helper.pdf</file>
+  </qresource>
+</RCC>

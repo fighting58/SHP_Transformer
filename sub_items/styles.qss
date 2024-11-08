@@ -1,0 +1,76 @@
+QWidget {
+                font-family: 'Segoe UI', Arial;
+                font-size: 12px;
+                background-color: rgba(255,255,255,0);
+                color: #ccd0cf;
+                border-radius: 4px;
+            }
+
+#main_frame {
+    background-image: url(:/images/bg.png);
+    border: 1px solid gray;
+    border-radius: 10px;
+}
+
+QLineEdit {
+    padding: 5px;
+    border: none;
+}
+
+QLineEdit[readOnly="true"] {
+    background-color: #000;
+}
+
+QPushButton {
+    background-color: #4a5c6a;
+    color: #ccd0cf;
+    border: none;
+    padding: 7px 20px;
+}
+
+#input_button1 {
+    padding: 2px 20px;
+}          
+QPushButton:hover {
+    background-color: #ccd0cf;
+    color: #253745;
+}
+
+QGroupBox {
+    border: 1px solid #444;
+    margin-top: 8px;
+}
+
+QGroupBox > QLineEdit {
+    text-align: center; 
+    font-weight: bold;
+    background-color: rgba(0, 0, 0, 90);               
+}
+
+QGroupBox > QLineEdit:hover, QGroupBox > QLineEdit:focus {
+    border:2px solid #fff;
+}
+
+QGroupBox::title {
+    subcontrol-origin: margin;
+    left: 10px;
+    padding: 0 3px 0 3px;
+}
+
+/* Custom Title Bar */
+CustomTitleBar #title {
+    font-size: 14px;
+    font-weight: bold;
+    /*border: 2px solid white;
+    background-color: #333;
+    border-radius: 10px; */
+    margin: 2px;    
+}
+
+CustomTitleBar QToolButton {
+    background-color: white;
+    border-radius: 10px;
+}
+CustomTitleBar QToolButton:hover {
+    background-color: red;
+}
