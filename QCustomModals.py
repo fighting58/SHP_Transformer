@@ -1,8 +1,8 @@
 import weakref
 
-from PyQt5.QtGui import QPaintEvent, QPainter, QIcon, QPalette, QPixmap
-from PyQt5.QtCore import Qt, QPoint, QSize, QEvent, QTimer, QPropertyAnimation, QParallelAnimationGroup, QEasingCurve, QObject, pyqtSignal
-from PyQt5.QtWidgets import QStyleOption, QWidget, QStyle, QGraphicsOpacityEffect, QApplication
+from PySide6.QtGui import QPaintEvent, QPainter, QIcon, QPalette, QPixmap
+from PySide6.QtCore import Qt, QPoint, QSize, QEvent, QTimer, QPropertyAnimation, QParallelAnimationGroup, QEasingCurve, QObject, Signal
+from PySide6.QtWidgets import QStyleOption, QWidget, QStyle, QGraphicsOpacityEffect, QApplication
 from QCustomModals_ui import Ui_Form
 
 class LoadForm(QWidget):
@@ -24,7 +24,7 @@ class QCustomModals:
         margin = 24
         spacing = 16
         
-        closedSignal = pyqtSignal()
+        closedSignal = Signal()
         
         commonStyle = ("""
                 * {

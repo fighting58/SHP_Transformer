@@ -1,6 +1,6 @@
-from PyQt5.QtWidgets import QApplication, QFileDialog, QWidget, QPushButton
-from PyQt5.QtCore import Qt, QSize, QRegExp, QFile, QTextStream
-from PyQt5.QtGui import QIcon, QPixmap, QRegExpValidator, QCursor
+from PySide6.QtWidgets import QApplication, QFileDialog, QWidget, QPushButton
+from PySide6.QtCore import Qt, QSize, QRegularExpression, QFile, QTextStream
+from PySide6.QtGui import QIcon, QPixmap, QRegularExpressionValidator, QCursor
 import sys
 from shp_convert import calculate_dxdy, calculate_length_and_bearing, adjust_shapefile_features
 from main_ui import Ui_Form
@@ -14,9 +14,9 @@ class ShpConverter(QWidget, Ui_Form):
     def __init__(self):
         super().__init__()
         self.setFixedSize(480, 290)
-        self.setWindowFlags(Qt.WindowType.FramelessWindowHint)  # 테두리 없는 윈도우 생성
-        self.setAttribute(Qt.WA_TranslucentBackground) # 투명 배경 설정
-        self.setupUi(self) 
+        self.setWindowFlags(Qt.FramelessWindowHint)  # 테두리 없는 윈도우 생성
+        self.setAttribute(Qt.WA_TranslucentBackground)  # 투명 배경 설정
+        self.setupUi(self)
 
         self.shp = None
         self.saveas = None        
@@ -26,13 +26,12 @@ class ShpConverter(QWidget, Ui_Form):
         self.input_button1.icon_hover = QIcon(':/images/shapefile_white.svg')
         self.input_button1.setToolTip("Shp파일 불러오기")
         self.input_button1.refresh()
-        self.main_frame.setFixedSize(480,290)
-        self.main_frame.setFixedSize(480,290)
+        self.main_frame.setFixedSize(480, 290)
         self.round = 10
 
         # 좌표 입력란에 validator 설정
-        regExp = QRegExp(r'^[0-9]*\.?[0-9]*$')
-        validator = QRegExpValidator(regExp)
+        regExp = QRegularExpression(r'^[0-9]*\.?[0-9]*$')
+        validator = QRegularExpressionValidator(regExp)
         for lineedit in [self.px1, self.px2, self.py1, self.py2, self.qx1, self.qx2, self.qy1, self.qy2]:
             lineedit.setValidator(validator)
 
@@ -43,9 +42,9 @@ class ShpConverter(QWidget, Ui_Form):
 
         # 스타일 적용
         style_file = QFile(':/styles/styles.qss')
-        style_file.open(QFile.ReadOnly| QFile.Text)
-        style_stream = QTextStream(style_file)
-        self.setStyleSheet(style_stream.readAll())
+        if style_file.open(QFile.ReadOnly | QFile.Text):
+            style_stream = QTextStream(style_file)
+            self.setStyleSheet(style_stream.readAll())
 
     def get_shp(self):
         """ 파일 불러오기 """
