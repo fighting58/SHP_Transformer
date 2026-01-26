@@ -82,13 +82,20 @@ def adjust_shapefile_features(input_shapefile, output_shapefile, translation=(0,
     :param scaling_factor: 축척 배율 (기본값: 1)
     """
     # Shapefile 읽기
-    gdf = gpd.read_file(input_shapefile)
+    gdf = gpd.read_file(input_shapefile, 'cp949')
     
     # 각 피처의 기하학적 객체에 대해 변환 적용
     gdf['geometry'] = gdf['geometry'].apply(lambda geom: transform_geometry(geom, translation, rotation_angle, scaling_factor, rotation_origin))
     
     # 변환된 Shapefile 쓰기
-    gdf.to_file(output_shapefile, encoding='utf-8')
+    gdf.to_file(output_shapefile, encoding='cp949')
+
+
+def estimate_encoding(input_shapefile):
+    import fiona
+
+    with fiona.open(input_shapefile) as src:
+        return src.encoding
 
 
 # 사용 예시

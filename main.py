@@ -13,7 +13,7 @@ import tempfile
 class ShpConverter(QWidget, Ui_Form):
     def __init__(self):
         super().__init__()
-        self.setFixedSize(480, 290)
+        self.setFixedSize(600, 290)
         self.setWindowFlags(Qt.FramelessWindowHint)  # 테두리 없는 윈도우 생성
         self.setAttribute(Qt.WA_TranslucentBackground)  # 투명 배경 설정
         self.setupUi(self)
@@ -26,7 +26,7 @@ class ShpConverter(QWidget, Ui_Form):
         self.input_button1.icon_hover = QIcon(':/images/shapefile_white.svg')
         self.input_button1.setToolTip("Shp파일 불러오기")
         self.input_button1.refresh()
-        self.main_frame.setFixedSize(480, 290)
+        self.main_frame.setFixedSize(600, 290)
         self.round = 10
 
         # 좌표 입력란에 validator 설정

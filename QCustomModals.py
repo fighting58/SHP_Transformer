@@ -340,7 +340,6 @@ class QCustomModals:
             else:
                 self.setStyleSheet(lightStyle + self.commonStyle)
                 
-
     class WarningModal(BaseModal):
         def __init__(self, **kwargs):
             super().__init__(**kwargs)
@@ -372,7 +371,6 @@ class QCustomModals:
                 self.setStyleSheet(darkStyle + self.commonStyle)
             else:
                 self.setStyleSheet(lightStyle + self.commonStyle)
-
 
     class ErrorModal(BaseModal):
         def __init__(self, **kwargs):
@@ -408,8 +406,6 @@ class QCustomModals:
             else:
                 self.setStyleSheet(lightStyle + self.commonStyle)
 
-
-
     class CustomModal(BaseModal):
         def __init__(self, **kwargs):
             super().__init__(**kwargs)
@@ -424,7 +420,6 @@ class QCustomModals:
 
             self.setStyleSheet(style)
             
-
 class QCustomModalsManager(QObject):
     _instance = None
     managers = {}
@@ -666,7 +661,6 @@ class TopQCustomModalsManager(QCustomModalsManager):
     def slideStartPos(self, QCustomModals: QCustomModals):
        return QPoint(QCustomModals.pos().x(), -QCustomModals.height())
 
-
 @QCustomModalsManager.register("top-right")
 class TopRightQCustomModalsManager(QCustomModalsManager):
     """ Top right position info bar manager """
@@ -685,7 +679,6 @@ class TopRightQCustomModalsManager(QCustomModalsManager):
 
     def slideStartPos(self, QCustomModals: QCustomModals):
         return QPoint(QCustomModals.parent().width(), self.modalPosition(QCustomModals).y())
-
 
 @QCustomModalsManager.register("bottom-right")
 class BottomRightQCustomModalsManager(QCustomModalsManager):
@@ -707,7 +700,6 @@ class BottomRightQCustomModalsManager(QCustomModalsManager):
     def slideStartPos(self, QCustomModals: QCustomModals):
         return QPoint(QCustomModals.parent().width(), self.modalPosition(QCustomModals).y())
 
-
 @QCustomModalsManager.register("top-left")
 class TopLeftQCustomModalsManager(QCustomModalsManager):
     """ Top left position info bar manager """
@@ -727,7 +719,6 @@ class TopLeftQCustomModalsManager(QCustomModalsManager):
     def slideStartPos(self, QCustomModals: QCustomModals):
         return QPoint(-QCustomModals.width(), self.modalPosition(QCustomModals).y())
 
-
 @QCustomModalsManager.register("bottom-left")
 class BottomLeftQCustomModalsManager(QCustomModalsManager):
     """ Bottom left position info bar manager """
@@ -746,7 +737,6 @@ class BottomLeftQCustomModalsManager(QCustomModalsManager):
 
     def slideStartPos(self, QCustomModals: QCustomModals):
         return QPoint(-QCustomModals.width(), self.modalPosition(QCustomModals).y())
-
 
 @QCustomModalsManager.register("bottom-center")
 class BottomQCustomModalsManager(QCustomModalsManager):
