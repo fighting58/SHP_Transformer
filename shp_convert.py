@@ -105,7 +105,7 @@ def round_coordinates(geom: base.BaseGeometry, precision: int = 3) -> base.BaseG
     geom_mapping['coordinates'] = round_elements(geom_mapping['coordinates'])
     return shape(geom_mapping)
 
-def adjust_shapefile_features(input_shapefile: str, output_shapefile: str, translation: tuple=(0, 0), rotation_angle: float=0, scaling_factor: float=1.0, rotation_origin: tuple=(0, 0)):
+def adjust_shapefile_features(input_shapefile: str, output_shapefile: str, translation: tuple=(0, 0), rotation_angle: float=0, scaling_factor: float=1.0, rotation_origin: tuple=(0, 0), encoding='cp949'):
     """
     Shapefile의 피처 좌표에 대해 이동, 회전, 축척 변환을 적용하여 새로운 Shapefile에 저장합니다.
     
@@ -118,10 +118,10 @@ def adjust_shapefile_features(input_shapefile: str, output_shapefile: str, trans
     :return: none, shp 파일 저장
     """
     # Shapefile 읽기
-    gdf = gpd.read_file(input_shapefile)
+    gdf = gpd.read_file(input_shapefile, encoding=encoding)
     
     # 각 피처의 기하학적 객체에 대해 변환 적용
     gdf['geometry'] = gdf['geometry'].apply(lambda geom: transform_geometry(geom, translation, rotation_angle, scaling_factor, rotation_origin))
 
        # 변환된 Shapefile 쓰기
-    gdf.to_file(output_shapefile, encoding='euc-kr')
+    gdf.to_file(output_shapefile, encoding=encoding)

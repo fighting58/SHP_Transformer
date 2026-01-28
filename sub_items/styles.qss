@@ -14,11 +14,61 @@ QWidget {
 
 QLineEdit {
     padding: 5px;
-    border: none;
+    border-bottom: none;
+}
+
+#lineedit_saup_name, #lineedit_detail {
+    color: #88f3a8;
+    font-weight: bold;
+    border-radius: 0;
+    border-bottom: 2px solid #ccd0cf; 
 }
 
 QLineEdit[readOnly="true"] {
     background-color: #000;
+}
+
+#convert_manager_frame {    
+    background-color: rgba(120, 120, 120, 40);
+}
+
+#input_path1 {    
+    background-color: rgba(0,0, 0, 200);
+}
+
+QRadioButton::indicator {
+    width: 12px;
+    height: 12px;
+}
+
+QRadioButton::indicator:unchecked {
+    border: 2px solid #8a8a8a;
+    border-radius: 6px;
+    background: transparent;
+}
+
+QRadioButton::indicator:unchecked:hover {
+    border-color: #0078d4;
+}
+
+QRadioButton::indicator:checked {
+    border: 2px solid #0078d4;
+    border-radius: 6px;
+    background-color: #0078d4;
+    background-clip: content;
+}
+
+QRadioButton::indicator:checked:hover {
+    background-color: #2899f5;
+}
+
+QRadioButton::indicator:disabled {
+    border-color: #c0c0c0;
+    background: #e6e6e6;
+}
+
+QRadioButton::indicator:checked:disabled {
+    background-clip: content;
 }
 
 QPushButton {
@@ -30,7 +80,8 @@ QPushButton {
 
 #input_button1 {
     padding: 2px 20px;
-}          
+} 
+
 QPushButton:hover {
     background-color: #ccd0cf;
     color: #253745;

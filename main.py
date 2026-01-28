@@ -1,4 +1,4 @@
-from PySide6.QtWidgets import QApplication, QFileDialog, QWidget, QPushButton
+from PySide6.QtWidgets import QApplication, QFileDialog, QWidget, QPushButton, QLineEdit
 from PySide6.QtCore import Qt, QSize, QRegularExpression, QFile, QTextStream
 from PySide6.QtGui import QIcon, QPixmap, QRegularExpressionValidator, QCursor
 import sys
@@ -8,25 +8,51 @@ import resources
 from QCustomModals import QCustomModals
 import os
 import tempfile
-
+import json
 
 class ShpConverter(QWidget, Ui_Form):
     def __init__(self):
         super().__init__()
-        self.setFixedSize(600, 290)
+        self.setFixedSize(630, 400)
         self.setWindowFlags(Qt.FramelessWindowHint)  # 테두리 없는 윈도우 생성
         self.setAttribute(Qt.WA_TranslucentBackground)  # 투명 배경 설정
         self.setupUi(self)
 
         self.shp = None
-        self.saveas = None        
+        self.saveas = None  
+        self.conv_file = None   
+        self.conv_reverse  = False  # 역변환 여부
+        self.encoding = 'cp949' 
         
         self.input_path1.setPlaceholderText("Shp 파일 입력")
         self.input_button1.icon_normal = QIcon(':/images/shapefile_dark.svg')
         self.input_button1.icon_hover = QIcon(':/images/shapefile_white.svg')
         self.input_button1.setToolTip("Shp파일 불러오기")
         self.input_button1.refresh()
-        self.main_frame.setFixedSize(600, 290)
+
+        self.btn_conv_init.icon_normal = QIcon(':/images/file.svg')
+        self.btn_conv_init.icon_hover = QIcon(':/images/file.svg')
+        self.btn_conv_init.setToolTip("새로 작성")
+        self.btn_conv_init.refresh()
+
+        self.btn_conv_open.icon_normal = QIcon(':/images/folder-open.svg')
+        self.btn_conv_open.icon_hover = QIcon(':/images/folder-open.svg')
+        self.btn_conv_open.setToolTip("좌표변환 파일 불러오기")
+        self.btn_conv_open.refresh()
+
+        self.btn_conv_save.icon_normal = QIcon(':/images/save.svg')
+        self.btn_conv_save.icon_hover = QIcon(':/images/save.svg')
+        self.btn_conv_save.setToolTip("좌표변환 파일 저장")
+        self.btn_conv_save.refresh()
+
+        self.btn_conv_reverse.icon_normal = QIcon(':/images/arrow-right-arrow-left.svg')
+        self.btn_conv_reverse.icon_hover = QIcon(':/images/arrow-right-arrow-left.svg')    
+        self.btn_conv_reverse.setToolTip("역변환")
+        self.btn_conv_reverse.refresh()
+
+        self.encoding_cp949.setChecked(True)
+
+        self.main_frame.setFixedSize(630, 400)
         self.round = 10
 
         # 좌표 입력란에 validator 설정
@@ -39,6 +65,23 @@ class ShpConverter(QWidget, Ui_Form):
         self.input_button1.clicked.connect(self.get_shp)
         self.btn_run.clicked.connect(self.run)
         self.titlebar.help_btn.clicked.connect(self.open_pdf)
+
+        self.btn_conv_init.clicked.connect(self.init_convert)  # shp 파일입력을 제외한 모든 라인에디트 내용 초기화
+        self.btn_conv_open.clicked.connect(self.open_convert)  # 좌표변환 파일 읽고 변환값 입력
+        self.btn_conv_save.clicked.connect(self.save_convert)  # 좌표변환 파일 저장
+        self.btn_conv_reverse.clicked.connect(self.reverse_convert)  # 좌표변환 변환값 반전
+        self.encoding_cp949.toggled.connect(self.on_encoding_change)
+        self.encoding_utf8.toggled.connect(self.on_encoding_change)
+
+        # 라인에디트 탭 오더 적용
+        editable_lineedits = [self.lineedit_saup_name, self.lineedit_detail, self.px1, self.py1, self.qx1, self.qy1, self.px2, self.py2, self.qx2, self.qy2]        
+        for current, next_widget in zip(editable_lineedits, editable_lineedits[1:]):
+            self.setTabOrder(current, next_widget)
+
+        # 라인에디트 포커스 이동 적용(엔터 입력시)
+        for le in self.findChildren(QLineEdit):
+            if le.objectName() != "input_path1":   # shp 파일 입력 제외
+                le.returnPressed.connect(self.focusNextChild)
 
         # 스타일 적용
         style_file = QFile(':/styles/styles.qss')
@@ -56,7 +99,101 @@ class ShpConverter(QWidget, Ui_Form):
         else:
             self.shp = None
             self.input_path1.setText('')
+
+    def on_encoding_change(self):
+        """ 파일 인코딩 변경 """
+        if self.encoding_cp949.isChecked():
+            self.encoding = 'cp949'
+        else:
+            self.encoding = 'utf-8'
+
+    def init_convert(self):
+        """ 좌표변환값 초기화 """   
+        self.conv_file = None
+        self.conv_reverse = False
+        for line_edit in self.findChildren(QLineEdit):
+            if line_edit.objectName() != "input_path1":
+                line_edit.clear()
+
+    def open_convert(self):
+        """ 좌표변환 파일 읽고 변환값 입력 """
+        conv_file, _ = QFileDialog.getOpenFileName(self, caption="Select Conversion File", directory='', filter='*.json')
+        if conv_file:
+            self.conv_file = conv_file
+            self.conv_reverse = False
+            with open(conv_file, "r") as f:
+                dict_convert = json.load(f)
+                self.lineedit_saup_name.setText(dict_convert["saup_name"])
+                self.lineedit_detail.setText(dict_convert["detail"])
+                self.px1.setText(dict_convert["px1"])
+                self.py1.setText(dict_convert["py1"])
+                self.qx1.setText(dict_convert["qx1"])
+                self.qy1.setText(dict_convert["qy1"])
+                self.px2.setText(dict_convert["px2"])
+                self.py2.setText(dict_convert["py2"])
+                self.qx2.setText(dict_convert["qx2"])                
+                self.qy2.setText(dict_convert["qy2"])   
+
+    def save_convert(self):
+        """ 좌표변환 파일 저장 """
+        # 데이터 유효성 검사
+        valid_check = (self.lineedit_saup_name.text().strip() != "") and (self.lineedit_detail.text().strip() != "") \
+                      and (self.px1.text() != "") and (self.py1.text() != "") and (self.qx1.text() != "") and (self.qy1.text() != "") \
+                      and (self.px2.text() != "") and (self.py2.text() != "") and (self.qx2.text() != "") and (self.qy2.text() != "")
+        
+        if valid_check:
+            dict_convert = {
+                "saup_name": self.lineedit_saup_name.text().strip(),
+                "detail": self.lineedit_detail.text().strip(),
+                "px1": self.px1.text(),
+                "py1": self.py1.text(),
+                "qx1": self.qx1.text(),
+                "qy1": self.qy1.text(),
+                "px2": self.px2.text(),
+                "py2": self.py2.text(),
+                "qx2": self.qx2.text(),
+                "qy2": self.qy2.text()
+            }
+
+            saveas, _ = QFileDialog.getSaveFileName(self, caption="Save Convert File", directory='', filter='*.json')
+
+            with open(saveas, "w") as f:
+                json.dump(dict_convert, f)        
+                self.show_modal('success', parent=self.main_frame, title="Save Success", description=f"Saved to {saveas}")
+
+            self.conv_file = saveas
+            self.conv_reverse = False
+        else:
+            self.show_modal("error", parent=self.main_frame, title="Missing Input Fields", description="Please ensure that all fields are filled out before proceeding.")
+
+
+    def reverse_convert(self):
+        """ 좌표변환 변환값 반전 """        
+        px1, py1 = self.px1.text(), self.py1.text()
+        qx1, qy1 = self.qx1.text(), self.qy1.text()
+        px2, py2 = self.px2.text(), self.py2.text()
+        qx2, qy2 = self.qx2.text(), self.qy2.text()
+
+        self.px1.setText(qx1)
+        self.py1.setText(qy1)
+        self.qx1.setText(px1)
+        self.qy1.setText(py1)
+        self.px2.setText(qx2)
+        self.py2.setText(qy2)
+        self.qx2.setText(px2)
+        self.qy2.setText(py2)
+
+        self.conv_reverse = not self.conv_reverse
+        if self.conv_reverse and self.conv_file is not None:
+            self.lineedit_saup_name.setText(self.lineedit_saup_name.text() + " (Reverse)")
+            self.lineedit_saup_name.setStyleSheet("color: #ff0000")
+        else:
+            self.lineedit_saup_name.setText(self.lineedit_saup_name.text().replace(" (Reverse)", ""))
+            self.lineedit_saup_name.setStyleSheet("color: #88f3a8")
     
+    def focus_next_lineedit(self):
+        self.focusNextChild()
+
     def show_modal(self, modal_type, **kargs):
         """ 메시지 송출 """
         default_settings = {'position': 'bottom-left', 'duration': 2000, 'closeIcon': ':/images/x.svg'}
@@ -124,7 +261,7 @@ class ShpConverter(QWidget, Ui_Form):
 
         # 변환 실행
         try:
-            adjust_shapefile_features(self.shp, self.saveas, translation, rotation_angle, scaling_factor, rotation_origin=rotation_origin)
+            adjust_shapefile_features(self.shp, self.saveas, translation, rotation_angle, scaling_factor, rotation_origin=rotation_origin, encoding=self.encoding)
             self.show_modal('success', parent=self.main_frame, title="Transform Success", description=f"Export: {self.saveas}")
         except Exception as e:
             self.show_modal("error", parent=self.main_frame, title="Transform Failed", description=f"{e}")

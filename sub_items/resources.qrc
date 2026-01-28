@@ -6,6 +6,10 @@
     <file>x.svg</file>
     <file>smile.svg</file>
     <file>frown.svg</file>
+    <file>save.svg</file>
+    <file>folder-open.svg</file>
+    <file>arrow-right-arrow-left.svg</file>
+    <file>file.svg</file>
   </qresource>
   <qresource prefix="styles">
     <file>styles.qss</file>
